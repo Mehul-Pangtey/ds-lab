@@ -1,68 +1,71 @@
 #include <stdio.h>
-#include <ctype.h>
 
-#define MAX 100
+int stack[100];
+int top = -1;
 
-void push(int stack[], int *top, int value)
+void push(int value)
 {
-    (*top)++;
-    stack[*top] = value;
+    stack[++top] = value;
 }
 
-int pop(int stack[], int *top)
+int pop()
 {
-    int value = stack[*top];
-    (*top)--;
-    return value;
+    return stack[top--];
 }
 
 int main()
 {
-    int T;
-    scanf("%d", &T);
-    getchar();
+    char expression[100];
+    int i = 0;
 
-    while (T--)
+    printf("Enter postfix expression: ");
+    fgets(expression, 100, stdin);
+
+    while (expression[i] != '\0' && expression[i] != '\n')
     {
-        char exp[200];
-        int stack[MAX];
-        int top = -1;
-
-        fgets(exp, sizeof(exp), stdin);
-
-        for (int i = 0; exp[i] != '\0'; i++)
+        // Ignore spaces
+        if (expression[i] == ' ')
         {
-            if (exp[i] == ' ')
-                continue;
-
-            // If it is a number
-            if (isdigit(exp[i]))
-            {
-                push(stack, &top, exp[i] - '0');
-            }
-
-            // If it is an operator
-            else
-            {
-                int b = pop(stack, &top);
-                int a = pop(stack, &top);
-
-                if (exp[i] == '+')
-                    push(stack, &top, a + b);
-
-                else if (exp[i] == '-')
-                    push(stack, &top, a - b);
-
-                else if (exp[i] == '*')
-                    push(stack, &top, a * b);
-
-                else if (exp[i] == '/')
-                    push(stack, &top, a / b);
-            }
+            i++;
         }
 
-        printf("%d\n", pop(stack, &top));
+        // Read complete number
+        else if (expression[i] >= '0' && expression[i] <= '9')
+        {
+            int num = 0;
+
+            while (expression[i] >= '0' && expression[i] <= '9')
+            {
+                num = num * 10 + (expression[i] - '0');
+                i++;
+            }
+
+            push(num);
+        }
+
+        // Operator
+        else if (expression[i] == '+' ||
+                 expression[i] == '-' ||
+                 expression[i] == '*' ||
+                 expression[i] == '/')
+        {
+            int b = pop();
+            int a = pop();
+
+            if (expression[i] == '+')
+                push(a + b);
+            else if (expression[i] == '-')
+                push(a - b);
+            else if (expression[i] == '*')
+                push(a * b);
+            else if (expression[i] == '/')
+                push(a / b);
+
+            i++;
+        }
     }
+
+    printf("Result = %d\n", pop());
 
     return 0;
 }

@@ -1,214 +1,140 @@
 #include <stdio.h>
+#define max 100
 
-#define MAX 10
+int dq[max];
+int front = -1, rear = -1;
 
-int dq[MAX];
-int front = -1;
-int rear = -1;
+void iend(int data);
+void ifront(int data);
+void pfront();
+void pend();
+void dfront();
+void dend();
+void isfull();
+void isempty();
 
-void insertFront(int x)
-{
-    if (front == 0)
-    {
-        printf("Cannot insert at front\n");
-    }
-    else if (front == -1)
-    {
-        front = 0;
-        rear = 0;
-        dq[front] = x;
-    }
-    else
-    {
-        front--;
-        dq[front] = x;
-    }
-}
+int main() {
+    int ch = 0, data; // Initialised ch to prevent stray stack errors
+    while (ch != 9) {
+        printf("\n1.insert from front\n2.insert from end\n3.delete from front\n");
+        printf("4.delete from end\n5.is empty\n6.is full\n7.display from front\n8.display from end\n9.exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &ch);
+        switch (ch) {
+            case 1:
+                printf("enter data to enter in front:");
+                scanf("%d", &data);
+                ifront(data);
+                break;
 
-void insertEnd(int x)
-{
-    if (rear == MAX - 1)
-    {
-        printf("Cannot insert at end\n");
-    }
-    else if (rear == -1)
-    {
-        front = 0;
-        rear = 0;
-        dq[rear] = x;
-    }
-    else
-    {
-        rear++;
-        dq[rear] = x;
-    }
-}
+            case 2:
+                printf("enter data to enter in end:");
+                scanf("%d", &data);
+                iend(data);
+                break;
 
-void deleteFront()
-{
-    if (front == -1)
-    {
-        printf("Deque is empty\n");
-    }
-    else
-    {
-        printf("Deleted = %d\n", dq[front]);
-
-        if (front == rear)
-        {
-            front = -1;
-            rear = -1;
+            case 3: dfront(); break;
+            case 4: dend(); break;
+            case 5: isempty(); break;
+            case 6: isfull(); break;
+            case 7: pfront(); break;
+            case 8: pend(); break;
+            case 9: printf("exitingg....\n"); break;
+            default: printf("enter a valid choice\n");
         }
-        else
-        {
+    }
+    return 0;
+}
+
+void ifront(int data) {
+    if (front == 0) {
+        printf("Cannot insert at front (no space ahead)\n");
+    } else if (front == -1) { // Added 'else' to prevent execution flow fall-through
+        front = 0;
+        rear = 0;
+        dq[front] = data;
+    } else {
+        front--;
+        dq[front] = data;
+    }
+}
+
+void iend(int data) {
+    if (rear == max - 1) {
+        printf("cannot insert at end\n");
+    } else {
+        if (rear == -1) {
+            rear = 0;
+            front = 0;
+            dq[rear] = data;
+        } else {
+            dq[++rear] = data;
+        }
+    }
+}
+
+void dfront() {
+    if (front == -1) {
+        printf("empty queue\n");
+    } else {
+        printf("element removed:%d\n", dq[front]);
+        if (front == rear) {
+            front = -1;
+            rear = -1; 
+        } else {
             front++;
         }
     }
 }
 
-void deleteEnd()
-{
-    if (front == -1)
-    {
-        printf("Deque is empty\n");
-    }
-    else
-    {
-        printf("Deleted = %d\n", dq[rear]);
-
-        if (front == rear)
-        {
+void dend() {
+    if (rear == -1) {
+        printf("empty\n");
+    } else {
+        printf("deleted element:%d\n", dq[rear]);
+        if (rear == front) {
             front = -1;
             rear = -1;
-        }
-        else
-        {
+        } else {
             rear--;
         }
     }
 }
 
-void isEmpty()
-{
-    if (front == -1)
-        printf("Deque is empty\n");
+void isfull() {
+    if (rear == max - 1) // Fixed: Linear queue limit met when rear hits maximum capacity
+        printf("full queue\n");
     else
-        printf("Deque is not empty\n");
+        printf("queue is not full\n");
 }
 
-void isFull()
-{
-    if (front == 0 && rear == MAX - 1)
-        printf("Deque is full\n");
+void isempty() {
+    if (front == -1) 
+        printf("empty queue\n"); // Fixed string from "full queue" to "empty queue"
     else
-        printf("Deque is not full\n");
+        printf("queue is not empty\n");
 }
 
-void printFront()
-{
-    int i;
-
-    if (front == -1)
-    {
-        printf("Deque is empty\n");
-    }
-    else
-    {
-        printf("Deque from Front: ");
-
-        for (i = front; i <= rear; i++)
+void pfront() {
+    if (front == -1) {
+        printf("empty queue\n");
+    } else {
+        printf("values from front: ");
+        for (int i = front; i <= rear; i++) {
             printf("%d ", dq[i]);
-
-        printf("\n");
-    }
-}
-
-void printEnd()
-{
-    int i;
-
-    if (front == -1)
-    {
-        printf("Deque is empty\n");
-    }
-    else
-    {
-        printf("Deque from End: ");
-
-        for (i = rear; i >= front; i--)
-            printf("%d ", dq[i]);
-
-        printf("\n");
-    }
-}
-
-int main()
-{
-    int choice;
-    int x;
-
-    do
-    {
-        printf("\n1. Insert Front");
-        printf("\n2. Insert End");
-        printf("\n3. Delete Front");
-        printf("\n4. Delete End");
-        printf("\n5. Is Empty");
-        printf("\n6. Is Full");
-        printf("\n7. Print Front");
-        printf("\n8. Print End");
-        printf("\n9. Exit");
-
-        printf("\nEnter choice: ");
-        scanf("%d", &choice);
-
-        switch (choice)
-        {
-        case 1:
-            printf("Enter value: ");
-            scanf("%d", &x);
-            insertFront(x);
-            break;
-
-        case 2:
-            printf("Enter value: ");
-            scanf("%d", &x);
-            insertEnd(x);
-            break;
-
-        case 3:
-            deleteFront();
-            break;
-
-        case 4:
-            deleteEnd();
-            break;
-
-        case 5:
-            isEmpty();
-            break;
-
-        case 6:
-            isFull();
-            break;
-
-        case 7:
-            printFront();
-            break;
-
-        case 8:
-            printEnd();
-            break;
-
-        case 9:
-            printf("Program ended\n");
-            break;
-
-        default:
-            printf("Invalid choice\n");
         }
+        printf("\n");
+    }
+}
 
-    } while (choice != 9);
-
-    return 0;
+void pend() {
+    if (rear == -1) {
+        printf("empty queue\n");
+    } else {
+        printf("values from end: ");
+        for (int i = rear; i >= front; i--) {
+            printf("%d ", dq[i]);
+        }
+        printf("\n");
+    }
 }
